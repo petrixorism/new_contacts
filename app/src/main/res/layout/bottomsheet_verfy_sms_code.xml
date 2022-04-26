@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ic_dialog_background"
+    android:fitsSystemWindows="true">
+
+
+    <TextView
+        android:id="@+id/name_edit_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:maxLines="2"
+        android:text="Verify SMS code"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/text_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="#505050"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/sms_code_et"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/name_edit_text2"
+        tools:text="We have sent SMS code to your phone number" />
+
+    <EditText
+        android:id="@+id/sms_code_et"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text"
+        android:fitsSystemWindows="true"
+        android:hint="Enter SMS code here"
+        android:inputType="phone"
+        android:paddingStart="16dp"
+        app:layout_constraintBottom_toTopOf="@id/verify_sms_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_description"
+        tools:ignore="RtlSymmetry" />
+
+    <Button
+        android:id="@+id/verify_sms_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/grey_button_background"
+        android:fitsSystemWindows="true"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Verify"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/sms_code_et"
+        app:layout_constraintStart_toStartOf="@+id/sms_code_et"
+        app:layout_constraintTop_toBottomOf="@+id/sms_code_et" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

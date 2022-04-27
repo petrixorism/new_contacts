@@ -7,7 +7,7 @@ import uz.gita.contacts.data.model.response.ContactResponse
 
 interface ContactRepository {
 
-    fun getAllContacts(): LiveData<List<ResultData<ContactResponse>>>
+    fun getAllContacts(): LiveData<ResultData<List<ContactResponse>>>
 
     fun deleteContact(contactRequest: ContactRequest): LiveData<ResultData<ContactResponse>>
 

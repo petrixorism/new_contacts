@@ -1,4 +1,4 @@
-package uz.gita.contacts.domain.impl
+package uz.gita.contacts.domain.repository.impl
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -29,52 +29,56 @@ class AuthRepositoryImpl
                 val result = authApi.register(data)
                 if (result.isSuccessful) {
                     result.body().apply {
-                        Log.d("CNCT","Success ${this?.message!!}")
-                        emit(ResultData.Success<RegisterResponse>(this.data!!))
+                        emit(ResultData.Success(this!!))
                     }
                 } else {
-                    Log.d("CNCT","Fail ${result.body()!!.message}")
-                    emit(ResultData.Message<RegisterResponse>(result.message()))
+                    emit(ResultData.Message(result.message()))
                 }
 
             } catch (e: Throwable) {
-                Log.d("CNCT","Error ${e.message}")
-                emit(ResultData.Error<RegisterResponse>(e))
+                emit(ResultData.Error(e))
             }
 
         }
 
-    override fun login(data: LoginRequest): LiveData<ResultData<TokenResponse>> = liveData{
+    override fun login(data: LoginRequest): LiveData<ResultData<TokenResponse>> = liveData {
 
         try {
             val result = authApi.login(data)
             if (result.isSuccessful) {
                 result.body().apply {
-                    emit(ResultData.Success<TokenResponse>(this!!.data!!))
+                    pref.isLogedIn = true
+                    pref.token = this!!.token.toString()
+
+                    emit(ResultData.Success(this))
                 }
             } else {
-                emit(ResultData.Message<TokenResponse>(result.message()))
+                emit(ResultData.Message(result.message()))
             }
 
         } catch (e: Throwable) {
-            emit(ResultData.Error<TokenResponse>(e))
+            emit(ResultData.Error(e))
         }
 
     }
 
-    override fun verifySMSCode(data: VerifyRequest): LiveData<ResultData<TokenResponse>> = liveData {
-        try {
-            val result = authApi.verifySmsCode(data)
-            if (result.isSuccessful) {
-                result.body().apply {
-                    emit(ResultData.Success<TokenResponse>(this!!.data!!))
-                }
-            } else {
-                emit(ResultData.Message<TokenResponse>(result.message()))
-            }
+    override fun verifySMSCode(data: VerifyRequest): LiveData<ResultData<TokenResponse>> =
+        liveData {
+            try {
+                val result = authApi.verifySmsCode(data)
+                if (result.isSuccessful) {
+                    result.body().apply {
+                        pref.isLogedIn = true
+                        pref.token = this!!.token.toString()
 
-        } catch (e: Throwable) {
-            emit(ResultData.Error<TokenResponse>(e))
+                        emit(ResultData.Success(this))
+                    }
+                } else {
+                    emit(ResultData.Message(result.message()))
+                }
+
+            } catch (e: Throwable) {
+                emit(ResultData.Error(e))
+            }
         }
-    }
 }

@@ -14,12 +14,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class ApiModule {
 
-    @Provides
-    @Singleton
+    @[Provides Singleton]
     fun provideNewsApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 
-    @Provides
-    @Singleton
+    @[Provides Singleton]
     fun provideContactApi(retrofit: Retrofit): ContactApi = retrofit.create(ContactApi::class.java)
 
 }

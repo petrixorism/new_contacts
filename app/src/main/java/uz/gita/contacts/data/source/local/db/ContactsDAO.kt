@@ -7,7 +7,13 @@ import androidx.room.*
 interface ContactsDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(contactEntity: ContactEntity)
+    suspend fun insertContact(contactEntity: ContactEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllContacts(contactEntity: List<ContactEntity>)
+
+    @Update
+    suspend fun updateContact(contactEntity: ContactEntity)
 
     @Delete
     suspend fun deleteContact(contactEntity: ContactEntity)

@@ -1,4 +1,4 @@
-package uz.gita.contacts.ui.viewmodel
+package uz.gita.contacts.ui.viewmodel.impl
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +9,7 @@ import uz.gita.contacts.data.model.request.VerifyRequest
 import uz.gita.contacts.data.model.response.RegisterResponse
 import uz.gita.contacts.data.model.response.TokenResponse
 import uz.gita.contacts.domain.repository.AuthRepository
+import uz.gita.contacts.ui.viewmodel.RegisterViewModel
 import uz.gita.contacts.utils.isConnected
 import javax.inject.Inject
 
@@ -17,7 +18,7 @@ class RegisterViewModelImpl @Inject constructor(private val repository: AuthRepo
     ViewModel(),
     RegisterViewModel {
 
-    override val progressLiveDataScope = MediatorLiveData<Boolean>()
+    override val progressLiveData = MediatorLiveData<Boolean>()
     override val registrationLiveData = MutableLiveData<RegisterResponse>()
     override val failLiveData = MutableLiveData<String>()
     override val notConnectionLiveData = MutableLiveData<Boolean>()
@@ -29,9 +30,9 @@ class RegisterViewModelImpl @Inject constructor(private val repository: AuthRepo
             notConnectionLiveData.postValue(true)
         } else {
             viewModelScope.launch {
-                progressLiveDataScope.postValue(true)
+                progressLiveData.postValue(true)
                 val result = repository.register(registerRequest)
-                progressLiveDataScope.addSource(result) {
+                progressLiveData.addSource(result) {
 
                     when (it) {
                         is ResultData.Success -> {
@@ -41,11 +42,13 @@ class RegisterViewModelImpl @Inject constructor(private val repository: AuthRepo
                             failLiveData.postValue(it.message)
                         }
                         is ResultData.Error -> {
-                            failLiveData.postValue(it.error!!.toString())
+                            failLiveData.postValue(it.error.toString())
                         }
                     }
 
                 }
+                progressLiveData.postValue(false)
+
             }
 
         }
@@ -57,9 +60,9 @@ class RegisterViewModelImpl @Inject constructor(private val repository: AuthRepo
             notConnectionLiveData.postValue(true)
         } else {
             viewModelScope.launch {
-                progressLiveDataScope.postValue(true)
+                progressLiveData.postValue(true)
                 val result = repository.verifySMSCode(data)
-                progressLiveDataScope.addSource(result) {
+                progressLiveData.addSource(result) {
 
                     when (it) {
                         is ResultData.Success -> {
@@ -72,8 +75,9 @@ class RegisterViewModelImpl @Inject constructor(private val repository: AuthRepo
                             failLiveData.postValue(it.error!!.toString())
                         }
                     }
-
                 }
+                progressLiveData.postValue(false)
+
             }
 
         }

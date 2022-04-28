@@ -35,6 +35,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             nextButton.setOnClickListener {
                 findNavController().navigate(MainFragmentDirections.actionMainFragmentToHomeFragment())
             }
+            socially.setOnClickListener {
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToBaseUrlFragment())
+            }
+
         }
     }
 

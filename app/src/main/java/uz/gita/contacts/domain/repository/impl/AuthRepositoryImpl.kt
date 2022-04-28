@@ -3,10 +3,12 @@ package uz.gita.contacts.domain.repository.impl
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.google.gson.Gson
 import uz.gita.contacts.data.model.ResultData
 import uz.gita.contacts.data.model.request.LoginRequest
 import uz.gita.contacts.data.model.request.RegisterRequest
 import uz.gita.contacts.data.model.request.VerifyRequest
+import uz.gita.contacts.data.model.response.ContactResponse
 import uz.gita.contacts.data.model.response.RegisterResponse
 import uz.gita.contacts.data.model.response.TokenResponse
 import uz.gita.contacts.data.model.response.toMessage
@@ -33,7 +35,12 @@ class AuthRepositoryImpl
                         emit(ResultData.Success(this!!))
                     }
                 } else {
-                    emit(ResultData.Message(result.body()!!.message!!))
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        result.errorBody()?.charStream(),
+                        ContactResponse::class.java
+                    )
+                    emit(ResultData.Message(errorResponse.message!!))
                 }
 
             } catch (e: Throwable) {
@@ -46,15 +53,24 @@ class AuthRepositoryImpl
 
         try {
             val result = authApi.login(data)
+            Log.d("AUTH", "login: ongoing")
+
             if (result.isSuccessful) {
+                Log.d("AUTH", "login: success")
+
                 result.body().apply {
                     pref.isLogedIn = true
                     pref.token = this!!.token.toString()
                     emit(ResultData.Success(this))
                 }
             } else {
-                Log.d("TAG", "login:${result.body()!!.toMessage()}")
-                emit(ResultData.Message(result.body()!!.message!!))
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    result.errorBody()?.charStream(),
+                    ContactResponse::class.java
+                )
+                Log.d("AUTH", "login:${errorResponse.message!!}")
+                emit(ResultData.Message(errorResponse.message!!))
             }
 
         } catch (e: Throwable) {
@@ -75,7 +91,12 @@ class AuthRepositoryImpl
                         emit(ResultData.Success(this))
                     }
                 } else {
-                    emit(ResultData.Message(result.message()))
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        result.errorBody()?.charStream(),
+                        ContactResponse::class.java
+                    )
+                    emit(ResultData.Message(errorResponse.message!!))
                 }
 
             } catch (e: Throwable) {

@@ -11,7 +11,8 @@
         android:id="@+id/socially"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="100dp"
+
         android:fontFamily="@font/poppins_semi_bold"
         android:text="@string/socially"
         android:textColor="@color/black"
@@ -38,7 +39,7 @@
         android:id="@+id/entrance_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_regular"
         android:gravity="center"
         app:layout_constraintVertical_chainStyle="packed"

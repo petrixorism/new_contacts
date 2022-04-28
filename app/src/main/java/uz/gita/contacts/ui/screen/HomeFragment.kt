@@ -2,6 +2,7 @@ package uz.gita.contacts.ui.screen
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -9,6 +10,7 @@ import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +22,7 @@ import uz.gita.contacts.databinding.FragmentHomeBinding
 import uz.gita.contacts.ui.adapters.ContactAdapter
 import uz.gita.contacts.ui.viewmodel.HomeViewModel
 import uz.gita.contacts.ui.viewmodel.impl.HomeViewModelImpl
+import uz.gita.contacts.utils.makeVisibleOrGone
 import uz.gita.contacts.utils.showSnackBar
 import uz.gita.contacts.utils.showToast
 
@@ -43,6 +46,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             failLiveData.observe(viewLifecycleOwner, failContactsObserver)
             notConnectionLiveData.observe(viewLifecycleOwner, noConnectionContactsObserver)
             addContactLiveData.observe(viewLifecycleOwner, addContactObserver)
+            logoutLiveData.observe(viewLifecycleOwner, logoutObserver)
+        }
+
+        binding.settingButton.setOnClickListener {
+            showLogoutPopUpMenu()
         }
 
         binding.addContactButton.setOnClickListener {
@@ -52,13 +60,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             showPopUp(it.button, it.data)
         }
 
+
     }
 
+    private val logoutObserver = Observer<Unit> {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToMainFragment())
+    }
     private val getContactsObserver = Observer<List<ContactResponse>> {
         adapter.submitList(it)
     }
     private val progressObserver = Observer<Boolean> {
-        showToast(it.toString())
+        Log.d("PRGRSS", it.toString())
+        makeVisibleOrGone(binding.progressCircular, it)
     }
     private val deleteContactsObserver = Observer<ContactResponse> {
         showSnackBar("Contact has been deleted")
@@ -160,6 +173,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
 
+            return@setOnMenuItemClickListener false
+        }
+    }
+
+    fun showLogoutPopUpMenu() {
+        val popup = PopupMenu(requireContext(), binding.settingButton)
+        popup.inflate(R.menu.setting_menu)
+        popup.show()
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.logout -> {
+                    viewModel.logout()
+                    return@setOnMenuItemClickListener true
+                }
+
+            }
             return@setOnMenuItemClickListener false
         }
     }

@@ -3,6 +3,7 @@ package uz.gita.contacts.domain.repository.impl
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.google.gson.Gson
 import uz.gita.contacts.data.model.ResultData
 import uz.gita.contacts.data.model.request.AddContactRequest
 import uz.gita.contacts.data.model.request.ContactRequest
@@ -15,9 +16,10 @@ import uz.gita.contacts.utils.isConnected
 import uz.gita.contacts.utils.toContactEntity
 import uz.gita.contacts.utils.toContactResponse
 import javax.inject.Inject
+
 private val TAG = "CONTACT_REPOSITORY"
+
 class ContactRepositoryImpl @Inject constructor(
-    private val pref: SharedPref,
     private val contactApi: ContactApi,
     private val contactsDAO: ContactsDAO
 ) : ContactRepository {
@@ -30,12 +32,28 @@ class ContactRepositoryImpl @Inject constructor(
                     result.body().apply {
                         contactsDAO.insertAllContacts(this!!.map { it.toContactEntity() })
                     }
-                    emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
+                    emit(
+                        ResultData.Success(
+                            contactsDAO.getAllContacts().map { it.toContactResponse() })
+                    )
                 } else {
-                    emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        result.errorBody()?.charStream(),
+                        ContactResponse::class.java
+                    )
+
+                    emit(
+                        ResultData.Message(
+                            errorResponse.message.toString()
+                        )
+                    )
                 }
             } else {
-                emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
+                emit(
+                    ResultData.Success(
+                        contactsDAO.getAllContacts().map { it.toContactResponse() })
+                )
             }
 
         } catch (e: Throwable) {
@@ -56,8 +74,13 @@ class ContactRepositoryImpl @Inject constructor(
                         emit(ResultData.Success(this))
                     }
                 } else {
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        result.errorBody()?.charStream(),
+                        ContactResponse::class.java
+                    )
                     Log.d(TAG, "addContact: FAIL")
-                    emit(ResultData.Message(result.body()!!.message!!))
+                    emit(ResultData.Message(errorResponse.message.toString()))
                 }
             } catch (e: Throwable) {
                 Log.d(TAG, "addContact: ERROR")
@@ -75,7 +98,12 @@ class ContactRepositoryImpl @Inject constructor(
                         emit(ResultData.Success(this))
                     }
                 } else {
-                    emit(ResultData.Message(result.body()!!.message!!))
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(
+                        result.errorBody()?.charStream(),
+                        ContactResponse::class.java
+                    )
+                    emit(ResultData.Message(errorResponse.message!!))
                 }
             } catch (e: Throwable) {
                 emit(ResultData.Error(e))
@@ -84,18 +112,24 @@ class ContactRepositoryImpl @Inject constructor(
 
     override fun deleteContact(id: Int): LiveData<ResultData<ContactResponse>> = liveData {
         try {
-            val resultData = contactApi.deleteContact(id)
-            if (resultData.isSuccessful) {
-                resultData.body().apply {
+            val result = contactApi.deleteContact(id)
+            if (result.isSuccessful) {
+                result.body().apply {
                     contactsDAO.deleteContact(this!!.toContactEntity())
                     emit(ResultData.Success(this))
                 }
             } else {
-                emit(ResultData.Message(resultData.message()))
+                val gson = Gson()
+                val errorResponse = gson.fromJson(
+                    result.errorBody()?.charStream(),
+                    ContactResponse::class.java
+                )
+                emit(ResultData.Message(errorResponse.message!!))
             }
         } catch (e: Throwable) {
             emit(ResultData.Error(e))
         }
     }
+
 
 }

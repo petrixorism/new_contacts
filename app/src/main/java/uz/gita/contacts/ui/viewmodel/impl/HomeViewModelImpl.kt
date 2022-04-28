@@ -34,15 +34,19 @@ class HomeViewModelImpl @Inject constructor(private val repository: ContactRepos
             notConnectionLiveData.postValue(Unit)
         }
         viewModelScope.launch {
+
             progressLiveData.addSource(repository.getAllContacts()) {
                 when (it) {
                     is ResultData.Success -> getAllContactsLiveData.postValue(it.data!!)
                     is ResultData.Message -> failLiveData.postValue(it.message)
                     is ResultData.Error -> failLiveData.postValue(it.error.message)
                 }
+
             }
+            progressLiveData.postValue(true)
+            progressLiveData.postValue(false)
+
         }
-        progressLiveData.postValue(false)
     }
 
     override fun addContact(contactRequest: AddContactRequest) {
@@ -76,7 +80,8 @@ class HomeViewModelImpl @Inject constructor(private val repository: ContactRepos
                 }
             }
         }
-        progressLiveData.postValue(false)    }
+        progressLiveData.postValue(false)
+    }
 
     override fun deleteContact(id: Int) {
         progressLiveData.postValue(true)

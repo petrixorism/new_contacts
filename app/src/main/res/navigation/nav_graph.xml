@@ -64,5 +64,13 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_mainFragment_to_baseUrlFragment"
+            app:destination="@id/baseUrlFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/baseUrlFragment"
+        tools:layout="@layout/fragment_base_url"
+        android:name="uz.gita.contacts.ui.screen.BaseUrlFragment"
+        android:label="BaseUrlFragment" />
 </navigation>

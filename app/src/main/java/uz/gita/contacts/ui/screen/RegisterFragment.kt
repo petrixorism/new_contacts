@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -18,7 +17,6 @@ import uz.gita.contacts.data.model.request.RegisterRequest
 import uz.gita.contacts.data.model.request.VerifyRequest
 import uz.gita.contacts.data.model.response.RegisterResponse
 import uz.gita.contacts.data.model.response.TokenResponse
-import uz.gita.contacts.databinding.BottomsheetVerfySmsCodeBinding
 import uz.gita.contacts.databinding.FragmentRegisterBinding
 import uz.gita.contacts.ui.viewmodel.RegisterViewModel
 import uz.gita.contacts.ui.viewmodel.impl.RegisterViewModelImpl

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:text="Dilmurod" />
 
         <TextView
@@ -44,10 +44,10 @@
         android:gravity="center"
         android:paddingVertical="4dp">
 
-        <ImageButton
+        <Button
             android:id="@+id/more_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/ic_baseline_more_vert_24" />
     </LinearLayout>
 

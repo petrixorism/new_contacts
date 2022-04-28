@@ -19,7 +19,7 @@ class DatabaseModule {
 
     @[Provides Singleton]
     fun provideContactDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, ContactDatabase::class.java, "contact_db").build()
+        Room.databaseBuilder(context, ContactDatabase::class.java, "contact_db").allowMainThreadQueries().build()
 
     @[Provides Singleton]
     fun provideContactDao(db: ContactDatabase): ContactsDAO = db.getContactDao()

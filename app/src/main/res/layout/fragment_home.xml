@@ -36,8 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text"
         tools:itemCount="8"
-        tools:layout_editor_absoluteX="16dp"
-        tools:listitem="@layout/contact_item" />
+        tools:listitem="@layout/item_contact" />
 
     <Button
         android:id="@+id/setting_button"

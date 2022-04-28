@@ -9,6 +9,7 @@ import uz.gita.contacts.data.model.request.RegisterRequest
 import uz.gita.contacts.data.model.request.VerifyRequest
 import uz.gita.contacts.data.model.response.RegisterResponse
 import uz.gita.contacts.data.model.response.TokenResponse
+import uz.gita.contacts.data.model.response.toMessage
 import uz.gita.contacts.data.source.api.AuthApi
 import uz.gita.contacts.data.source.local.SharedPref
 import uz.gita.contacts.data.source.local.db.ContactsDAO
@@ -32,7 +33,7 @@ class AuthRepositoryImpl
                         emit(ResultData.Success(this!!))
                     }
                 } else {
-                    emit(ResultData.Message(result.message()))
+                    emit(ResultData.Message(result.body()!!.message!!))
                 }
 
             } catch (e: Throwable) {
@@ -49,11 +50,11 @@ class AuthRepositoryImpl
                 result.body().apply {
                     pref.isLogedIn = true
                     pref.token = this!!.token.toString()
-
                     emit(ResultData.Success(this))
                 }
             } else {
-                emit(ResultData.Message(result.message()))
+                Log.d("TAG", "login:${result.body()!!.toMessage()}")
+                emit(ResultData.Message(result.body()!!.message!!))
             }
 
         } catch (e: Throwable) {

@@ -19,7 +19,7 @@ fun Fragment.showSnackBar(message: String) {
     Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
 }
 
-fun Fragment.makeVisibleOrGone(view: View, isVisible: Boolean) {
+fun makeVisibleOrGone(view: View, isVisible: Boolean) {
     if (isVisible) view.visibility = VISIBLE
     else view.visibility = GONE
 }
@@ -28,4 +28,4 @@ fun ContactEntity.toContactResponse(): ContactResponse =
     ContactResponse(id, firstName, lastName, phone)
 
 fun ContactResponse.toContactEntity(): ContactEntity =
-    ContactEntity(id, firstName, lastName, phone)
+    ContactEntity(id!!, firstName!!, lastName!!, phone!!)

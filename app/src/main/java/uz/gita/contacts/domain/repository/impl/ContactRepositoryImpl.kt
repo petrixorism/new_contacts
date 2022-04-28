@@ -1,8 +1,10 @@
 package uz.gita.contacts.domain.repository.impl
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import uz.gita.contacts.data.model.ResultData
+import uz.gita.contacts.data.model.request.AddContactRequest
 import uz.gita.contacts.data.model.request.ContactRequest
 import uz.gita.contacts.data.model.response.ContactResponse
 import uz.gita.contacts.data.source.api.ContactApi
@@ -13,7 +15,7 @@ import uz.gita.contacts.utils.isConnected
 import uz.gita.contacts.utils.toContactEntity
 import uz.gita.contacts.utils.toContactResponse
 import javax.inject.Inject
-
+private val TAG = "CONTACT_REPOSITORY"
 class ContactRepositoryImpl @Inject constructor(
     private val pref: SharedPref,
     private val contactApi: ContactApi,
@@ -28,13 +30,12 @@ class ContactRepositoryImpl @Inject constructor(
                     result.body().apply {
                         contactsDAO.insertAllContacts(this!!.map { it.toContactEntity() })
                     }
-                    emit(ResultData.Success(contactsDAO.getAllContacts().value!!.map { it.toContactResponse() }))
-
+                    emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
                 } else {
-                    emit(ResultData.Message(result.message()))
+                    emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
                 }
             } else {
-                emit(ResultData.Success(contactsDAO.getAllContacts().value!!.map { it.toContactResponse() }))
+                emit(ResultData.Success(contactsDAO.getAllContacts().map { it.toContactResponse() }))
             }
 
         } catch (e: Throwable) {
@@ -43,27 +44,55 @@ class ContactRepositoryImpl @Inject constructor(
 
     }
 
-    override fun deleteContact(contactRequest: ContactRequest): LiveData<ResultData<ContactResponse>> =
+    override fun addContact(contactRequest: AddContactRequest): LiveData<ResultData<ContactResponse>> =
         liveData {
             try {
+                val result = contactApi.addContact(contactRequest)
+                if (result.isSuccessful) {
+                    Log.d(TAG, "addContact: SUCCESS 1")
+                    result.body().apply {
+                        contactsDAO.insertContact(this!!.toContactEntity())
+                        Log.d(TAG, "addContact: SUCCESS 2")
+                        emit(ResultData.Success(this))
+                    }
+                } else {
+                    Log.d(TAG, "addContact: FAIL")
+                    emit(ResultData.Message(result.body()!!.message!!))
+                }
+            } catch (e: Throwable) {
+                Log.d(TAG, "addContact: ERROR")
+                emit(ResultData.Error(e))
+            }
+        }
 
+    override fun updateContact(contactRequest: ContactRequest): LiveData<ResultData<ContactResponse>> =
+        liveData {
+            try {
+                val result = contactApi.editContact(contactRequest)
+                if (result.isSuccessful) {
+                    result.body().apply {
+                        contactsDAO.updateContact(this!!.toContactEntity())
+                        emit(ResultData.Success(this))
+                    }
+                } else {
+                    emit(ResultData.Message(result.body()!!.message!!))
+                }
             } catch (e: Throwable) {
                 emit(ResultData.Error(e))
             }
         }
 
-    override fun updateContact(contactResponse: ContactResponse): LiveData<ResultData<ContactResponse>> =
-        liveData {
-            try {
-
-            } catch (e: Throwable) {
-                emit(ResultData.Error(e))
-            }
-        }
-
-    override fun addContact(id: Int): LiveData<ResultData<ContactResponse>> = liveData {
+    override fun deleteContact(id: Int): LiveData<ResultData<ContactResponse>> = liveData {
         try {
-
+            val resultData = contactApi.deleteContact(id)
+            if (resultData.isSuccessful) {
+                resultData.body().apply {
+                    contactsDAO.deleteContact(this!!.toContactEntity())
+                    emit(ResultData.Success(this))
+                }
+            } else {
+                emit(ResultData.Message(resultData.message()))
+            }
         } catch (e: Throwable) {
             emit(ResultData.Error(e))
         }

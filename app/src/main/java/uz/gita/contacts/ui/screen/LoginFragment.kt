@@ -54,7 +54,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         showToast(it)
     }
     private val loginObserver = Observer<Unit> {
-        LoginFragmentDirections.actionLoginFragmentToHomeFragment()
+        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
     }
     private val notConnectionObserver = Observer<Unit> {
         showSnackBar("No internet connection")
